@@ -220,29 +220,27 @@ a { color: var(--violet); }
     </div>
     <div class="pane sunken">
       <section class="project" data-panel="path">
-        <h3>Navmesh pathfinding</h3>
+        <h3>A* pathfinding</h3>
         <div class="meta">CS380 · C++ · course project</div>
-                <dl class="write">
-          <dt>PROBLEM</dt><dd>Agents on a navmesh need paths that are both optimal and natural to watch. Raw A* output hugs corners and zig-zags.</dd>
-          <dt>APPROACH</dt><dd>A* across the mesh, the funnel algorithm to pull the corridor taut, then Catmull-Rom splines through the remaining waypoints.</dd>
-          <dt>OUTCOME</dt><dd>Shortest-path routes the agent follows smoothly, without snapping at corners.</dd>
-          <dt>LEARNED</dt><dd>Getting the spline's control-point mapping right at the path's endpoints mattered more than the search itself.</dd>
+        <dl class="write">
+          <dt>PROBLEM</dt><dd>Agents on a grid map need paths that are optimal and also look natural. Raw A* output hugs corners and zig-zags.</dd>
+          <dt>APPROACH</dt><dd>A* with my own open and closed lists and a choice of heuristics (Manhattan, Chebyshev, Euclidean, Octile). Rubberbanding then drops waypoints that have a clear line of sight, using Bresenham's algorithm, and Catmull-Rom splines smooth what's left.</dd>
+          <dt>OUTCOME</dt><dd>Paths that are straightened and smoothed, so the agent walks them without snapping at corners.</dd>
+          <dt>LEARNED</dt><dd>The line-of-sight check for rubberbanding took the longest, and understanding how the four spline control points work together was the other big step.</dd>
         </dl>
-        <div class="tags"><span class="raised">A*</span><span class="raised">FUNNEL</span><span class="raised">CATMULL-ROM</span></div>
-        <div class="plinks"><a class="btn raised" href="#w-demo" data-focus="w-demo">Open demo</a><a class="btn raised" href="https://github.com/regine-wong-sy/navmesh">Source ↗</a></div>
+        <div class="tags"><span class="raised">A*</span><span class="raised">RUBBERBANDING</span><span class="raised">CATMULL-ROM</span></div>
+        <div class="plinks"><a class="btn raised" href="#w-demo" data-focus="w-demo">Open demo</a></div>
       </section>
       <section class="project" data-panel="bt" hidden>
-        <h3>Behaviour tree runtime</h3>
+        <h3>Outdoor noise pollution</h3>
         <div class="meta">CS380 · C++ · course project</div>
-        <figure class="shot sunken"><img src="img/behaviour-tree.png" alt="Agents driven by the behaviour tree runtime" onerror="this.remove()"><figcaption>add img/behaviour-tree.png</figcaption></figure>
         <dl class="write">
-          <dt>PROBLEM</dt><dd>Agent logic written as nested if-statements becomes hard to extend or debug.</dd>
-          <dt>APPROACH</dt><dd>Composite, decorator and leaf nodes, including a looping sequencer, sharing world state through a blackboard.</dd>
-          <dt>OUTCOME</dt><dd>New behaviours are assembled from reusable nodes instead of being rewritten.</dd>
-          <dt>LEARNED</dt><dd>How node status (running, success, failure) propagating up the tree drives the whole design.</dd>
+          <dt>PROBLEM</dt><dd>Build a lively scene out of behaviour trees: agents that react to each other and to mouse clicks.</dd>
+          <dt>APPROACH</dt><dd>I wrote 15 nodes (a looping sequencer, repeat-until-fail and timer decorators, and leaves such as wave, jump, spin, spawn ball and kill nearest) and combined them into five trees, with the framework's blackboard sharing data between nodes. At an outdoor concert the fans wave, jump and vibe to the music until a giant red killer bird, which waits eight seconds, dives and takes out the noisy crowd. Clicking the map also spawns bouncing balls.</dd>
+          <dt>OUTCOME</dt><dd>A scene built entirely from reusable nodes. New behaviour means a new tree, not new control code.</dd>
+          <dt>LEARNED</dt><dd>Getting the bird's celebration to play once without restarting the whole tree took the most time, and so did tracing how mouse input travels from the framework into a leaf node.</dd>
         </dl>
-        <div class="tags"><span class="raised">BEHAVIOUR TREES</span><span class="raised">BLACKBOARD</span></div>
-        <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/behaviour-tree">Source ↗</a></div>
+        <div class="tags"><span class="raised">BEHAVIOUR TREES</span><span class="raised">BLACKBOARD</span><span class="raised">C++</span></div>
       </section>
       <section class="project" data-panel="gfx" hidden>
         <h3>OpenGL shaders showcase</h3>
