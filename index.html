@@ -243,16 +243,16 @@ a { color: var(--violet); }
         <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/behaviour-tree">Source ↗</a></div>
       </section>
       <section class="project" data-panel="gfx" hidden>
-        <h3>Deferred renderer</h3>
-        <div class="meta">Graphics · OpenGL / GLSL · course project</div>
-        <figure class="shot sunken"><img src="img/deferred-renderer.png" alt="Scene lit by the deferred renderer" onerror="this.remove()"><figcaption>add img/deferred-renderer.png</figcaption></figure>
+        <h3>OpenGL shaders showcase</h3>
+        <div class="meta">CSD2150 · C++ / OpenGL / GLSL · course project</div>
+        <figure class="shot sunken"><img src="img/graphics.png" alt="Scene from the OpenGL shaders showcase" onerror="this.remove()"><figcaption>All the demos running side by side in the Windows build</figcaption></figure>
         <dl class="write">
-          <dt>PROBLEM</dt><dd>Forward rendering cost grows with every light multiplied by every object.</dd>
-          <dt>APPROACH</dt><dd>A geometry pass into a G-buffer, then a lighting pass, with instanced draws, a skybox and gamma correction.</dd>
-          <dt>OUTCOME</dt><dd>Many lights in one scene, with lighting cost tied to screen pixels instead of object count.</dd>
+          <dt>PROBLEM</dt><dd>Learn how a real-time renderer works by building the pieces myself instead of using an engine.</dd>
+          <dt>APPROACH</dt><dd>A small C++ framework (windows, framebuffers, meshes, lights, materials) running a set of demos: ray casting and ray tracing, Phong shading, environment mapping, reflection and refraction, normal mapping, a portal, and deferred shading with blur, edge and cartoon filters.</dd>
+          <dt>OUTCOME</dt><dd>A Windows build anyone can download and run to flip through the demos.</dd>
           <dt>LEARNED</dt><dd>Working in linear space and converting at the end is what makes the lighting look right.</dd>
         </dl>
-        <div class="tags"><span class="raised">DEFERRED</span><span class="raised">INSTANCING</span><span class="raised">GLSL</span></div>
+        <div class="tags"><span class="raised">OPENGL</span><span class="raised">GLSL</span><span class="raised">DEFERRED</span></div>
         <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase/releases/latest">Download (Windows) ↓</a><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase">Source ↗</a></div>
       </section>
     </div>
