@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Regine — Computer Science (RTIS) student at DigiPen Singapore. Pathfinding, game AI, collision and rendering in C++.">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>regine.exe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Silkscreen:wght@400;700&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: a late-90s desktop. Printed "about me" on the wallpaper, overlapping draggable windows on wide screens, stacked windows on phones. Single light look by choice. */
+:root {
+  --desk: #f3f2f6;
+  --chrome: #d9d8de;
+  --chrome-hi: #ffffff;
+  --chrome-lo: #7c7b86;
+  --chrome-dk: #2a2a33;
+  --title-a: #0b1a8a;
+  --title-b: #3f6fd8;
+  --ink: #1b1a22;
+  --muted: #55535f;
+  --violet: #6a1fb8;
+  --pink: #d63c86;
+  --pixel: "Pixelify Sans", "Courier New", monospace;
+  --tiny: "Silkscreen", "Courier New", monospace;
+  --serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--desk); color: var(--ink); }
+body { font: 400 0.92rem/1.55 var(--body); padding-block: 0 48px; }
+body::before { /* film grain */
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: .16; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+a { color: var(--violet); }
+:focus-visible { outline: 2px dotted var(--ink); outline-offset: 2px; }
+
+/* bevels */
+.raised { background: var(--chrome); box-shadow: inset -1px -1px 0 var(--chrome-dk), inset 1px 1px 0 var(--chrome-hi), inset -2px -2px 0 var(--chrome-lo); }
+.sunken { box-shadow: inset 1px 1px 0 var(--chrome-lo), inset -1px -1px 0 var(--chrome-hi), inset 2px 2px 0 var(--chrome-dk); background: #fff; }
+
+/* taskbar */
+.taskbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 500; display: flex; align-items: center; gap: 6px; padding: 5px clamp(8px, 2vw, 12px); }
+.taskbar .scroll { display: flex; gap: 6px; overflow-x: auto; min-width: 0; flex: 1; scrollbar-width: none; }
+.btn { font: 400 0.82rem var(--tiny); color: var(--ink); border: 0; text-decoration: none; padding: 6px 14px; cursor: pointer; white-space: nowrap; }
+.btn:active, .btn[aria-pressed="true"] { box-shadow: inset 1px 1px 0 var(--chrome-dk), inset -1px -1px 0 var(--chrome-hi), inset 2px 2px 0 var(--chrome-lo); background: #cfced6; }
+.btn.tab { min-width: 118px; font-family: var(--body); font-style: italic; color: var(--muted); }
+.btn.tab[aria-pressed="true"] { color: var(--ink); }
+.btn.start { font-weight: 700; }
+.sep { width: 2px; align-self: stretch; margin: 2px 4px; box-shadow: inset 1px 0 var(--chrome-lo), inset -1px 0 var(--chrome-hi); flex: none; }
+.btn.min { font-size: 0.72rem; padding: 6px 10px; }
+.clock { font: 400 0.78rem var(--tiny); padding: 6px 12px; white-space: nowrap; font-variant-numeric: tabular-nums; flex: none; }
+
+/* desktop */
+.desktop { position: relative; max-width: 1200px; margin-inline: auto; padding-inline: 16px; min-height: 1760px; }
+.printed { position: absolute; left: 16px; top: 34px; width: 43%; display: grid; gap: 10px; }
+.printed > * { min-width: 0; }
+.hello { margin: 0; line-height: .82; }
+.hello .a { display: block; font: 700 clamp(3.2rem, 7.6vw, 5.6rem) var(--pixel); letter-spacing: -0.03em; transform: scaleY(1.15); transform-origin: bottom left; }
+.hello .b { display: block; font: 700 clamp(5rem, 12.5vw, 9.4rem) var(--pixel); letter-spacing: -0.05em; color: var(--ink); text-shadow: 3px 3px 0 var(--chrome); }
+.name { font: 400 clamp(2rem, 3.6vw, 2.7rem)/1.1 var(--serif); color: var(--violet); margin: 14px 0 0; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.intro { margin: 4px 0 0; font-weight: 600; max-width: 52ch; }
+.label { font: 400 1.7rem/1 var(--serif); color: var(--violet); text-decoration: underline; text-underline-offset: 5px; margin: 18px 0 4px; }
+.skills { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(from 210deg, var(--c1), var(--c2), var(--c1)); box-shadow: 0 2px 0 var(--chrome-lo); }
+.chip span { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; font: 700 0.66rem var(--tiny); color: var(--ink); }
+.edu { display: grid; gap: 10px; }
+.edu div { line-height: 1.25; }
+.edu small { display: block; color: var(--muted); }
+.edu b { font: 400 1.15rem var(--serif); display: block; }
+
+/* windows */
+.win { position: absolute; display: flex; flex-direction: column; padding: 3px; }
+.win.front { z-index: 50; }
+.titlebar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 3px 3px 8px; background: linear-gradient(90deg, var(--title-a), var(--title-b)); color: #fff; cursor: grab; touch-action: none; user-select: none; }
+.titlebar h2 { margin: 0; font: 700 0.86rem var(--tiny); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.win:not(.front) .titlebar { background: linear-gradient(90deg, #6b6a78, #a3a2ae); }
+.x { width: 22px; height: 20px; border: 0; padding: 0; cursor: pointer; font: 700 0.9rem/1 var(--tiny); color: var(--ink); flex: none; }
+.menubar { display: flex; gap: 14px; padding: 3px 8px; font: 400 0.74rem var(--tiny); color: var(--muted); }
+.menubar u { text-decoration: underline; }
+.pane { margin: 3px; padding: 14px; min-width: 0; }
+
+/* photo */
+.photo { margin: 3px; aspect-ratio: 4 / 4.4; max-width: 100%; position: relative; overflow: hidden; background: radial-gradient(circle at 50% 40%, #fff 0 18%, #dfe2f4 45%, #b9bfe0 100%); }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(.35) contrast(1.18) brightness(1.04); }
+.photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(110,130,255,.12), rgba(255,255,255,.08)); mix-blend-mode: screen; pointer-events: none; }
+.photo .ph { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font: 400 0.8rem var(--tiny); color: var(--muted); padding: 20px; }
+.photo .ph b { display: block; font: 700 4.2rem/1 var(--pixel); color: var(--title-a); margin-bottom: 10px; }
+
+/* socials */
+.socials { display: grid; gap: 4px; padding: 10px 12px; }
+.soc { display: flex; align-items: center; gap: 12px; padding: 6px 4px; color: var(--ink); text-decoration: none; font: 400 0.84rem var(--tiny); min-width: 0; }
+.soc span:last-child { overflow-wrap: anywhere; }
+.soc:hover { background: var(--title-a); color: #fff; }
+.glyph { width: 28px; height: 28px; flex: none; display: grid; place-items: center; font: 700 0.7rem var(--tiny); background: var(--ink); color: #fff; border-radius: 7px; }
+.soc:hover .glyph { background: #fff; color: var(--title-a); }
+
+/* projects */
+.ptabs { display: flex; gap: 2px; padding: 6px 6px 0; flex-wrap: wrap; }
+.ptabs .btn { font-family: var(--body); font-style: italic; padding: 5px 12px; }
+.project h3 { font: 400 clamp(1.7rem, 2.8vw, 2.2rem)/1.05 var(--serif); margin: 0 0 4px; color: var(--violet); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 2px; }
+.project .meta { font: 400 0.74rem var(--tiny); color: var(--muted); margin-bottom: 12px; }
+.shot { aspect-ratio: 16 / 9; max-width: 100%; margin: 0 0 14px; position: relative; display: grid; place-items: center; background: repeating-linear-gradient(45deg, #f2f2f6 0 10px, #e9e9ef 10px 20px); }
+.shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.shot figcaption { font: 400 0.74rem var(--tiny); color: var(--muted); }
+.write { display: grid; grid-template-columns: 92px 1fr; gap: 6px 14px; margin: 0 0 14px; }
+.write dt { font: 700 0.72rem var(--tiny); color: var(--pink); padding-top: 3px; }
+.write dd { margin: 0; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.tags span { font: 400 0.7rem var(--tiny); padding: 3px 8px; }
+.plinks { display: flex; gap: 8px; flex-wrap: wrap; }
+.plinks a { text-decoration: none; }
+
+/* demo */
+.demo canvas { display: block; width: 100%; aspect-ratio: 16 / 11; max-width: 100%; cursor: crosshair; touch-action: none; }
+.statusbar { display: flex; gap: 3px; margin: 0 3px 3px; font: 400 0.7rem var(--tiny); font-variant-numeric: tabular-nums; flex-wrap: wrap; }
+.statusbar span { padding: 3px 8px; flex: 1 1 auto; box-shadow: inset 1px 1px 0 var(--chrome-lo), inset -1px -1px 0 var(--chrome-hi); }
+
+/* notepad / status */
+.notepad { font: 400 0.9rem/1.6 "Courier New", Courier, monospace; white-space: normal; }
+.notepad p { margin: 0 0 10px; }
+.notepad b { font-family: var(--tiny); font-size: .8rem; }
+.alert { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; }
+.alert .icon { width: 38px; height: 38px; border-radius: 50%; background: var(--title-a); color: #fff; display: grid; place-items: center; font: 700 1.3rem var(--pixel); }
+.alert p { margin: 0 0 8px; }
+.alert .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+/* positions on wide screens (percent of desktop width) */
+#w-photo   { left: 49%; top: 46px;   width: 34%; }
+#w-social  { left: 65%; top: 410px;  width: 34%; }
+#w-proj    { left: 1%;  top: 920px;  width: 55%; }
+#w-demo    { left: 58%; top: 780px;  width: 41%; }
+#w-also    { left: 60%; top: 1250px; width: 36%; }
+#w-status  { left: 66%; top: 1540px; width: 32%; }
+
+@media (max-width: 899px) {
+  .desktop { min-height: 0 !important; display: flex; flex-direction: column; gap: 22px; padding-top: 24px; }
+  .printed, .win { position: static; width: auto !important; }
+  .titlebar { cursor: default; }
+  #w-photo { max-width: 420px; }
+}
+@media (max-width: 480px) {
+  .write { grid-template-columns: 1fr; gap: 0; }
+  .write dd { margin-bottom: 8px; }
+  .btn.tab { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="taskbar raised" role="toolbar" aria-label="Taskbar">
+  <button class="btn start raised" id="start" type="button">Start</button>
+  <span class="sep"></span>
+  <div class="scroll" id="tabs">
+    <button class="btn tab raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
+    <button class="btn tab raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
+    <button class="btn tab raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
+    <button class="btn raised" type="button" id="plus" aria-label="More projects">+</button>
+    <span id="tray" style="display:contents"></span>
+  </div>
+  <span class="clock sunken" id="clock">--/--/---- --:--</span>
+</div>
+
+<main class="desktop" id="desktop">
+  <section class="printed" aria-labelledby="hello">
+    <h1 class="hello" id="hello"><span class="a">about</span><span class="b">me!</span></h1>
+    <p class="name">Regine</p>
+    <p class="intro">Hello! I'm Regine, a computer science student at DigiPen Singapore specialising in real-time interactive simulation. I write C++ for pathfinding, game AI, collision and rendering, and I'm looking for a software engineering internship for Summer 2027.</p>
+
+    <p class="label">skills</p>
+    <div class="skills" aria-label="Skills">
+      <span class="chip" style="--c1:#2a4dff;--c2:#8fb0ff" title="C++"><span>C++</span></span>
+      <span class="chip" style="--c1:#6a1fb8;--c2:#d6a6ff" title="C"><span>C</span></span>
+      <span class="chip" style="--c1:#d63c86;--c2:#ffb3d4" title="OpenGL"><span>GL</span></span>
+      <span class="chip" style="--c1:#0f8a6a;--c2:#9be5cf" title="GLSL"><span>GLSL</span></span>
+      <span class="chip" style="--c1:#d98a00;--c2:#ffe08a" title="Python"><span>PY</span></span>
+      <span class="chip" style="--c1:#2a2a33;--c2:#a3a2ae" title="Git"><span>GIT</span></span>
+      <span class="chip" style="--c1:#1b74c9;--c2:#a9d4ff" title="Visual Studio"><span>VS</span></span>
+    </div>
+
+    <p class="label">education</p>
+    <div class="edu">
+      <div><small>2024–2028</small><b>DigiPen Institute of Technology Singapore</b>BS Computer Science in Real-Time Interactive Simulation</div>
+      <div><small>diploma</small><b>Temasek Polytechnic</b>Aerospace Electronics</div>
+    </div>
+  </section>
+
+  <article class="win raised" id="w-photo">
+    <div class="titlebar"><h2>MEET-REGINE</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="photo sunken">
+      <div class="ph"><div><b>:)</b>add img/me.jpg</div></div>
+      <img src="img/me.jpg" alt="Portrait of Regine" onerror="this.remove()">
+    </div>
+  </article>
+
+  <article class="win raised" id="w-social">
+    <div class="titlebar"><h2>SOCIALS</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="socials">
+      <a class="soc" href="https://github.com/your-handle"><span class="glyph">GH</span><span>@your-handle</span></a>
+      <a class="soc" href="https://linkedin.com/in/your-handle"><span class="glyph">IN</span><span>Regine</span></a>
+      <a class="soc" href="mailto:you@example.com"><span class="glyph">@</span><span>you@example.com</span></a>
+      <a class="soc" href="resume.pdf"><span class="glyph">CV</span><span>resume.pdf</span></a>
+    </div>
+  </article>
+
+  <article class="win raised" id="w-proj">
+    <div class="titlebar"><h2 id="proj-title">PROJECTS — pathfinding.doc</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>H</u>elp</span></div>
+    <div class="ptabs" id="ptabs">
+      <button class="btn raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
+      <button class="btn raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
+      <button class="btn raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
+    </div>
+    <div class="pane sunken">
+      <section class="project" data-panel="path">
+        <h3>Navmesh pathfinding</h3>
+        <div class="meta">CS380 · C++ · course project</div>
+                <dl class="write">
+          <dt>PROBLEM</dt><dd>Agents on a navmesh need paths that are both optimal and natural to watch. Raw A* output hugs corners and zig-zags.</dd>
+          <dt>APPROACH</dt><dd>A* across the mesh, the funnel algorithm to pull the corridor taut, then Catmull-Rom splines through the remaining waypoints.</dd>
+          <dt>OUTCOME</dt><dd>Shortest-path routes the agent follows smoothly, without snapping at corners.</dd>
+          <dt>LEARNED</dt><dd>Getting the spline's control-point mapping right at the path's endpoints mattered more than the search itself.</dd>
+        </dl>
+        <div class="tags"><span class="raised">A*</span><span class="raised">FUNNEL</span><span class="raised">CATMULL-ROM</span></div>
+        <div class="plinks"><a class="btn raised" href="#w-demo" data-focus="w-demo">Open demo</a><a class="btn raised" href="https://github.com/your-handle/navmesh">Source ↗</a></div>
+      </section>
+      <section class="project" data-panel="bt" hidden>
+        <h3>Behaviour tree runtime</h3>
+        <div class="meta">CS380 · C++ · course project</div>
+        <figure class="shot sunken"><img src="img/behaviour-tree.png" alt="Agents driven by the behaviour tree runtime" onerror="this.remove()"><figcaption>add img/behaviour-tree.png</figcaption></figure>
+        <dl class="write">
+          <dt>PROBLEM</dt><dd>Agent logic written as nested if-statements becomes hard to extend or debug.</dd>
+          <dt>APPROACH</dt><dd>Composite, decorator and leaf nodes, including a looping sequencer, sharing world state through a blackboard.</dd>
+          <dt>OUTCOME</dt><dd>New behaviours are assembled from reusable nodes instead of being rewritten.</dd>
+          <dt>LEARNED</dt><dd>How node status (running, success, failure) propagating up the tree drives the whole design.</dd>
+        </dl>
+        <div class="tags"><span class="raised">BEHAVIOUR TREES</span><span class="raised">BLACKBOARD</span></div>
+        <div class="plinks"><a class="btn raised" href="https://github.com/your-handle/behaviour-tree">Source ↗</a><a class="btn raised" href="https://youtu.be/your-video">Video ↗</a></div>
+      </section>
+      <section class="project" data-panel="gfx" hidden>
+        <h3>Deferred renderer</h3>
+        <div class="meta">Graphics · OpenGL / GLSL · course project</div>
+        <figure class="shot sunken"><img src="img/deferred-renderer.png" alt="Scene lit by the deferred renderer" onerror="this.remove()"><figcaption>add img/deferred-renderer.png</figcaption></figure>
+        <dl class="write">
+          <dt>PROBLEM</dt><dd>Forward rendering cost grows with every light multiplied by every object.</dd>
+          <dt>APPROACH</dt><dd>A geometry pass into a G-buffer, then a lighting pass, with instanced draws, a skybox and gamma correction.</dd>
+          <dt>OUTCOME</dt><dd>Many lights in one scene, with lighting cost tied to screen pixels instead of object count.</dd>
+          <dt>LEARNED</dt><dd>Working in linear space and converting at the end is what makes the lighting look right.</dd>
+        </dl>
+        <div class="tags"><span class="raised">DEFERRED</span><span class="raised">INSTANCING</span><span class="raised">GLSL</span></div>
+        <div class="plinks"><a class="btn raised" href="https://github.com/your-handle/deferred-renderer">Source ↗</a><a class="btn raised" href="https://youtu.be/your-video">Video ↗</a></div>
+      </section>
+    </div>
+  </article>
+
+  <article class="win raised demo" id="w-demo">
+    <div class="titlebar"><h2>NAV_DEMO.EXE</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="sunken" style="margin:3px"><canvas id="nav" aria-label="Pathfinding demo. Click or tap the grid to set a goal."></canvas></div>
+    <div class="statusbar">
+      <span>click to set goal</span>
+      <span>nodes <b id="st-exp">0</b></span>
+      <span>cost <b id="st-cost">0.0</b></span>
+      <span><b id="st-ms">0.00</b> ms</span>
+    </div>
+  </article>
+
+  <article class="win raised" id="w-also">
+    <div class="titlebar"><h2>ALSO_BUILT.TXT — Notepad</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="pane sunken notepad">
+      <p><b>collision + spatial partitioning</b><br>AABB vs 3 bounding-sphere methods (Ritter, centroid, Larsson). BVH + BSP trees. C++.</p>
+      <p><b>cutscene editor</b><br>In-engine tool for my team's game. Designers author and preview cutscenes without code.</p>
+      <p style="margin:0"><b>client-server app</b><br>Custom command protocol with hex data transfer. C++ sockets.</p>
+    </div>
+  </article>
+
+  <article class="win raised" id="w-status">
+    <div class="titlebar"><h2>STATUS</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="pane alert">
+      <span class="icon">i</span>
+      <div>
+        <p><b>Looking for: SWE internship, Summer 2027.</b></p>
+        <p>Based in Singapore (UTC+8), keen on New York or remote US. Engine, tools, graphics or backend.</p>
+        <div class="row"><a class="btn raised" href="mailto:you@example.com">Email me</a><a class="btn raised" href="resume.pdf">Resume</a></div>
+      </div>
+    </div>
+  </article>
+</main>
+
+<script>
+(() => {
+  const wide = matchMedia('(min-width: 900px)');
+  const desk = document.getElementById('desktop');
+  const wins = [...document.querySelectorAll('.win')];
+  const names = { 'w-photo': 'meet-regine', 'w-social': 'socials', 'w-proj': 'projects', 'w-demo': 'nav_demo', 'w-also': 'also_built', 'w-status': 'status' };
+  let z = 60;
+
+  function focusWin(w) {
+    wins.forEach(o => o.classList.remove('front'));
+    w.classList.add('front'); w.style.zIndex = ++z;
+  }
+  function fitDesk() {
+    if (!wide.matches) { desk.style.minHeight = ''; return; }
+    let max = 0;
+    [...wins, document.querySelector('.printed')].forEach(el => { if (!el.hidden) max = Math.max(max, el.offsetTop + el.offsetHeight); });
+    desk.style.minHeight = (max + 60) + 'px';
+  }
+
+  // drag (wide screens only)
+  wins.forEach(w => {
+    w.addEventListener('pointerdown', () => focusWin(w));
+    const bar = w.querySelector('.titlebar');
+    bar.addEventListener('pointerdown', e => {
+      if (!wide.matches || e.target.closest('.x')) return;
+      const sx = e.clientX, sy = e.clientY, ox = w.offsetLeft, oy = w.offsetTop;
+      bar.setPointerCapture(e.pointerId); bar.style.cursor = 'grabbing';
+      const move = ev => {
+        const maxX = desk.clientWidth - 80;
+        w.style.left = Math.max(-w.offsetWidth + 80, Math.min(maxX, ox + ev.clientX - sx)) + 'px';
+        w.style.top = Math.max(0, oy + ev.clientY - sy) + 'px';
+      };
+      const up = () => { bar.removeEventListener('pointermove', move); bar.style.cursor = ''; fitDesk(); };
+      bar.addEventListener('pointermove', move);
+      bar.addEventListener('pointerup', up, { once: true });
+    });
+    // minimise to taskbar
+    w.querySelector('.x').addEventListener('click', () => {
+      w.hidden = true;
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn min raised'; b.textContent = '▢ ' + names[w.id];
+      b.addEventListener('click', () => { w.hidden = false; b.remove(); focusWin(w); fitDesk(); });
+      document.getElementById('tray').appendChild(b);
+      fitDesk();
+    });
+  });
+
+  function openWin(id) {
+    const w = document.getElementById(id);
+    if (w.hidden) [...document.querySelectorAll('#tray .btn')].find(b => b.textContent.endsWith(names[id]))?.click();
+    focusWin(w);
+    w.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+  }
+
+  // project tabs (taskbar + window share state)
+  const titles = { path: 'pathfinding.doc', bt: 'game_ai.doc', gfx: 'graphics.doc' };
+  function showTab(t) {
+    document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
+    document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t);
+    document.getElementById('proj-title').textContent = 'PROJECTS — ' + titles[t];
+    fitDesk();
+  }
+  document.querySelectorAll('#ptabs [data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  document.querySelectorAll('#tabs [data-tab]').forEach(b => b.addEventListener('click', () => { showTab(b.dataset.tab); openWin('w-proj'); }));
+  document.getElementById('plus').addEventListener('click', () => openWin('w-also'));
+  document.getElementById('start').addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+  document.querySelectorAll('[data-focus]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); openWin(a.dataset.focus); }));
+
+  // clock, Singapore time
+  const clock = document.getElementById('clock');
+  const tick = () => {
+    const d = new Date(), f = o => d.toLocaleString('en-GB', { timeZone: 'Asia/Singapore', ...o });
+    clock.textContent = f({ day: '2-digit', month: '2-digit', year: 'numeric' }) + '  ' + f({ hour: 'numeric', minute: '2-digit', hour12: true }).toUpperCase();
+  };
+  tick(); setInterval(tick, 15000);
+
+  wide.addEventListener('change', fitDesk);
+  addEventListener('resize', fitDesk);
+  document.fonts?.ready.then(fitDesk);
+  focusWin(document.getElementById('w-social'));
+  fitDesk();
+})();
+
+(() => {
+  const cv = document.getElementById('nav'), ctx = cv.getContext('2d');
+  const COLS = 30, ROWS = 20, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const C = { bg: '#ffffff', grid: '#e4e3ec', explored: 'rgba(63,111,216,.13)', wall: '#2a2a33', raw: '#7c7b86', path: '#d63c86', agent: '#0b1a8a' };
+  let cell = 10, W = 0, H = 0;
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const wall = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+  for (let i = 0; i < 24; i++) {
+    const hz = rnd() > .5, len = 3 + Math.floor(rnd() * 6);
+    let x = Math.floor(rnd() * COLS), y = Math.floor(rnd() * ROWS);
+    for (let k = 0; k < len; k++) { if (x < COLS && y < ROWS) wall[y][x] = true; hz ? x++ : y++; }
+  }
+  wall[2][2] = false;
+  let agent = { x: 2.5, y: 2.5 }, explored = [], raw = [], spline = [], t = 0;
+
+  function resize() {
+    const r = cv.getBoundingClientRect(); if (!r.width) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = r.width * dpr; cv.height = r.height * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    W = r.width; H = r.height; cell = Math.min(W / COLS, H / ROWS);
+  }
+  function astar(sx, sy, gx, gy) {
+    const key = (x, y) => y * COLS + x, open = [], g = new Map(), from = new Map(), closed = new Set(), exp = [];
+    const h = (x, y) => { const dx = Math.abs(x - gx), dy = Math.abs(y - gy); return dx + dy + (Math.SQRT2 - 2) * Math.min(dx, dy); };
+    g.set(key(sx, sy), 0); open.push({ x: sx, y: sy, f: h(sx, sy) });
+    while (open.length) {
+      let bi = 0; for (let i = 1; i < open.length; i++) if (open[i].f < open[bi].f) bi = i;
+      const n = open.splice(bi, 1)[0], nk = key(n.x, n.y);
+      if (closed.has(nk)) continue; closed.add(nk); exp.push(n);
+      if (n.x === gx && n.y === gy) {
+        const p = [[gx, gy]]; let k = nk;
+        while (from.has(k)) { k = from.get(k); p.unshift([k % COLS, Math.floor(k / COLS)]); }
+        return { path: p, exp, cost: g.get(nk) };
+      }
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+        if (!dx && !dy) continue;
+        const x = n.x + dx, y = n.y + dy;
+        if (x < 0 || y < 0 || x >= COLS || y >= ROWS || wall[y][x]) continue;
+        if (dx && dy && (wall[n.y][x] || wall[y][n.x])) continue;
+        const ng = g.get(nk) + (dx && dy ? Math.SQRT2 : 1), k2 = key(x, y);
+        if (ng < (g.get(k2) ?? Infinity)) { g.set(k2, ng); from.set(k2, nk); open.push({ x, y, f: ng + h(x, y) }); }
+      }
+    }
+    return { path: [], exp, cost: 0 };
+  }
+  const simplify = p => p.length < 3 ? p.slice() : [p[0], ...p.slice(1, -1).filter((b, i) => { const a = p[i], c = p[i + 2]; return b[0] - a[0] !== c[0] - b[0] || b[1] - a[1] !== c[1] - b[1]; }), p[p.length - 1]];
+  function catmull(pts, steps = 10) {
+    if (pts.length < 2) return pts.slice();
+    const P = [pts[0], ...pts, pts[pts.length - 1]], out = [];
+    for (let i = 1; i < P.length - 2; i++) for (let s = 0; s < steps; s++) {
+      const u = s / steps, u2 = u * u, u3 = u2 * u, [p0, p1, p2, p3] = [P[i - 1], P[i], P[i + 1], P[i + 2]];
+      const f = (a, b, c, d) => .5 * (2 * b + (-a + c) * u + (2 * a - 5 * b + 4 * c - d) * u2 + (-a + 3 * b - 3 * c + d) * u3);
+      out.push([f(p0[0], p1[0], p2[0], p3[0]), f(p0[1], p1[1], p2[1], p3[1])]);
+    }
+    out.push(pts[pts.length - 1]); return out;
+  }
+  function goTo(gx, gy) {
+    if (wall[gy]?.[gx] !== false) return;
+    const t0 = performance.now(), r = astar(Math.floor(agent.x), Math.floor(agent.y), gx, gy), ms = performance.now() - t0;
+    explored = r.exp; raw = r.path.map(([x, y]) => [x + .5, y + .5]); if (raw.length) raw[0] = [agent.x, agent.y];
+    spline = catmull(simplify(raw)); t = reduce ? spline.length - 1 : 0;
+    document.getElementById('st-exp').textContent = r.exp.length;
+    document.getElementById('st-cost').textContent = r.cost.toFixed(1);
+    document.getElementById('st-ms').textContent = ms.toFixed(2);
+  }
+  function draw() {
+    if (W) {
+      ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
+      const ox = (W - cell * COLS) / 2, oy = (H - cell * ROWS) / 2, X = v => ox + v * cell, Y = v => oy + v * cell;
+      ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+      for (let x = 0; x <= COLS; x++) { ctx.beginPath(); ctx.moveTo(X(x), Y(0)); ctx.lineTo(X(x), Y(ROWS)); ctx.stroke(); }
+      for (let y = 0; y <= ROWS; y++) { ctx.beginPath(); ctx.moveTo(X(0), Y(y)); ctx.lineTo(X(COLS), Y(y)); ctx.stroke(); }
+      ctx.fillStyle = C.explored; explored.forEach(n => ctx.fillRect(X(n.x) + 1, Y(n.y) + 1, cell - 2, cell - 2));
+      ctx.fillStyle = C.wall; for (let y = 0; y < ROWS; y++) for (let x = 0; x < COLS; x++) if (wall[y][x]) ctx.fillRect(X(x), Y(y), cell, cell);
+      if (raw.length) {
+        ctx.setLineDash([3, 4]); ctx.strokeStyle = C.raw; ctx.lineWidth = 1.2;
+        ctx.beginPath(); raw.forEach(([x, y], i) => i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y))); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle = C.path; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+        ctx.beginPath(); spline.forEach(([x, y], i) => i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y))); ctx.stroke();
+        const g = raw[raw.length - 1]; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(g[0]), Y(g[1]), cell * .42, 0, 7); ctx.stroke();
+      }
+      if (spline.length) {
+        t = Math.min(t + .35, spline.length - 1);
+        const i = Math.floor(t), f = t - i, a = spline[i], b = spline[Math.min(i + 1, spline.length - 1)];
+        agent = { x: a[0] + (b[0] - a[0]) * f, y: a[1] + (b[1] - a[1]) * f };
+      }
+      ctx.fillStyle = C.agent; ctx.fillRect(X(agent.x) - cell * .32, Y(agent.y) - cell * .32, cell * .64, cell * .64);
+    }
+    requestAnimationFrame(draw);
+  }
+  cv.addEventListener('pointerdown', e => {
+    const r = cv.getBoundingClientRect(), ox = (W - cell * COLS) / 2, oy = (H - cell * ROWS) / 2;
+    goTo(Math.floor((e.clientX - r.left - ox) / cell), Math.floor((e.clientY - r.top - oy) / cell));
+  });
+  new ResizeObserver(resize).observe(cv);
+  resize();
+  let gx = 26, gy = 17; while (wall[gy][gx]) gx--;
+  goTo(gx, gy); t = reduce ? spline.length - 1 : spline.length * .45;
+  draw();
+})();
+</script>
+</body>
+</html>
