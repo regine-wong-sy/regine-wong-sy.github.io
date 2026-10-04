@@ -261,9 +261,10 @@ a { color: var(--violet); }
         <h3>Rock &amp; Ghoul</h3>
         <div class="meta">CSD2451 · C++17 · team game on a custom engine</div>
         <dl class="write">
-          <dt>ROLE</dt><dd>Tech lead and programmer on Team Avid Divas, a team of eight.</dd>
+          <dt>ROLE</dt><dd>Tech lead and programmer on Team Avid Divas, a team of eight. I built much of the engine's editor tooling.</dd>
           <dt>THE GAME</dt><dd>You play Rock, half of a guitar duo. Spirits attack before a gig, and you fight them with melee swings and spells cast by arrow-key sequences.</dd>
-          <dt>ENGINE</dt><dd>A custom C++17 engine with a dockable ImGui editor (scenes, prefabs, UI, assets, collision debugging and play/stop testing), FMOD audio, C# scripting through Mono and FFmpeg video cutscenes. Designers build levels and cutscenes in the editor without touching code.</dd>
+          <dt>ENGINE</dt><dd>A custom C++17 engine with FMOD audio, C# scripting through Mono and FFmpeg video cutscenes, plus a dockable ImGui editor so designers can build levels and cutscenes without touching code.</dd>
+          <dt>MY PART</dt><dd>I wrote about half of the editor code (roughly 8,000 lines, shared with two teammates). It covers the game view with play/stop testing, scene manager, entity inspector and prefabs, asset browsers, and a build-size analyzer. I also wrote the undo/redo system on my own. It covers adding and deleting entities, gizmo moves, and any component property, and keeps the last 30 actions. The editor can also create a new game from scratch: it sets up the project folders, audio manifest, default font and a starter <code>main.cpp</code>, then switches to it.</dd>
           <dt>OUTCOME</dt><dd>A playable build with menus, audio and cinematics that you can install and try.</dd>
         </dl>
         <div class="tags"><span class="raised">CUSTOM ENGINE</span><span class="raised">IMGUI</span><span class="raised">FMOD</span><span class="raised">MONO</span></div>
