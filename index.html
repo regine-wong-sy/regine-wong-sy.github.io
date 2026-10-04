@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Regine — Computer Science (RTIS) student at DigiPen Singapore. Pathfinding, game AI, collision and rendering in C++.">
+<meta name="description" content="Regine â€” Computer Science (RTIS) student at DigiPen Singapore. Pathfinding, game AI, collision and rendering in C++.">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>regine.exe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -160,6 +160,7 @@ a { color: var(--violet); }
     <button class="btn tab raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
     <button class="btn tab raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
     <button class="btn tab raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
+    <button class="btn tab raised" type="button" data-tab="game" aria-pressed="false">team game</button>
     <button class="btn raised" type="button" id="plus" aria-label="More projects">+</button>
     <span id="tray" style="display:contents"></span>
   </div>
@@ -185,13 +186,13 @@ a { color: var(--violet); }
 
     <p class="label">education</p>
     <div class="edu">
-      <div><small>2024–2028</small><b>DigiPen Institute of Technology Singapore</b>BS Computer Science in Real-Time Interactive Simulation</div>
+      <div><small>2024â€“2028</small><b>DigiPen Institute of Technology Singapore</b>BS Computer Science in Real-Time Interactive Simulation</div>
       <div><small>diploma</small><b>Temasek Polytechnic</b>Aerospace Electronics</div>
     </div>
   </section>
 
   <article class="win raised" id="w-photo">
-    <div class="titlebar"><h2>MEET-REGINE</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="titlebar"><h2>MEET-REGINE</h2><button class="x raised" type="button" aria-label="Minimise">âœ•</button></div>
     <div class="photo sunken">
       <div class="ph"><div><b>:)</b>add img/me.jpg</div></div>
       <img src="img/me.jpg" alt="Portrait of Regine" onerror="this.remove()">
@@ -199,7 +200,7 @@ a { color: var(--violet); }
   </article>
 
   <article class="win raised" id="w-social">
-    <div class="titlebar"><h2>SOCIALS</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="titlebar"><h2>SOCIALS</h2><button class="x raised" type="button" aria-label="Minimise">âœ•</button></div>
     <div class="socials">
       <a class="soc" href="https://github.com/regine-wong-sy"><span class="glyph">GH</span><span>@regine-wong-sy</span></a>
       <a class="soc" href="https://www.linkedin.com/in/wsy-regine"><span class="glyph">IN</span><span>Regine Wong</span></a>
@@ -209,17 +210,18 @@ a { color: var(--violet); }
   </article>
 
   <article class="win raised" id="w-proj">
-    <div class="titlebar"><h2 id="proj-title">PROJECTS — pathfinding.doc</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="titlebar"><h2 id="proj-title">PROJECTS â€” pathfinding.doc</h2><button class="x raised" type="button" aria-label="Minimise">âœ•</button></div>
     <div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>H</u>elp</span></div>
     <div class="ptabs" id="ptabs">
       <button class="btn raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
       <button class="btn raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
       <button class="btn raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
+      <button class="btn raised" type="button" data-tab="game" aria-pressed="false">team game</button>
     </div>
     <div class="pane sunken">
       <section class="project" data-panel="path">
         <h3>Navmesh pathfinding</h3>
-        <div class="meta">CS380 · C++ · course project</div>
+        <div class="meta">CS380 Â· C++ Â· course project</div>
                 <dl class="write">
           <dt>PROBLEM</dt><dd>Agents on a navmesh need paths that are both optimal and natural to watch. Raw A* output hugs corners and zig-zags.</dd>
           <dt>APPROACH</dt><dd>A* across the mesh, the funnel algorithm to pull the corridor taut, then Catmull-Rom splines through the remaining waypoints.</dd>
@@ -227,11 +229,11 @@ a { color: var(--violet); }
           <dt>LEARNED</dt><dd>Getting the spline's control-point mapping right at the path's endpoints mattered more than the search itself.</dd>
         </dl>
         <div class="tags"><span class="raised">A*</span><span class="raised">FUNNEL</span><span class="raised">CATMULL-ROM</span></div>
-        <div class="plinks"><a class="btn raised" href="#w-demo" data-focus="w-demo">Open demo</a><a class="btn raised" href="https://github.com/regine-wong-sy/navmesh">Source ↗</a></div>
+        <div class="plinks"><a class="btn raised" href="#w-demo" data-focus="w-demo">Open demo</a><a class="btn raised" href="https://github.com/regine-wong-sy/navmesh">Source â†—</a></div>
       </section>
       <section class="project" data-panel="bt" hidden>
         <h3>Behaviour tree runtime</h3>
-        <div class="meta">CS380 · C++ · course project</div>
+        <div class="meta">CS380 Â· C++ Â· course project</div>
         <figure class="shot sunken"><img src="img/behaviour-tree.png" alt="Agents driven by the behaviour tree runtime" onerror="this.remove()"><figcaption>add img/behaviour-tree.png</figcaption></figure>
         <dl class="write">
           <dt>PROBLEM</dt><dd>Agent logic written as nested if-statements becomes hard to extend or debug.</dd>
@@ -240,11 +242,11 @@ a { color: var(--violet); }
           <dt>LEARNED</dt><dd>How node status (running, success, failure) propagating up the tree drives the whole design.</dd>
         </dl>
         <div class="tags"><span class="raised">BEHAVIOUR TREES</span><span class="raised">BLACKBOARD</span></div>
-        <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/behaviour-tree">Source ↗</a></div>
+        <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/behaviour-tree">Source â†—</a></div>
       </section>
       <section class="project" data-panel="gfx" hidden>
         <h3>OpenGL shaders showcase</h3>
-        <div class="meta">CSD2150 · C++ / OpenGL / GLSL · course project</div>
+        <div class="meta">CSD2150 Â· C++ / OpenGL / GLSL Â· course project</div>
         <figure class="shot sunken"><img src="img/graphics.png" alt="Scene from the OpenGL shaders showcase" onerror="this.remove()"><figcaption>All the demos running side by side in the Windows build</figcaption></figure>
         <dl class="write">
           <dt>PROBLEM</dt><dd>Learn how a real-time renderer works by building the pieces myself instead of using an engine.</dd>
@@ -253,13 +255,24 @@ a { color: var(--violet); }
           <dt>LEARNED</dt><dd>Working in linear space and converting at the end is what makes the lighting look right.</dd>
         </dl>
         <div class="tags"><span class="raised">OPENGL</span><span class="raised">GLSL</span><span class="raised">DEFERRED</span></div>
-        <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase/releases/latest">Download (Windows) ↓</a><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase">Source ↗</a></div>
+        <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase/releases/latest">Download (Windows) â†“</a><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase">Source â†—</a></div>
+      </section>
+      <section class="project" data-panel="game" hidden>
+        <h3>Rock n Ghoul</h3>
+        <div class="meta">Team game Â· DigiPen Â· cutscene editor</div>
+        <dl class="write">
+          <dt>PROBLEM</dt><dd>Designers needed to build and preview cutscenes without writing code.</dd>
+          <dt>APPROACH</dt><dd>An in-engine cutscene editor: designers author a cutscene and preview it in the editor.</dd>
+          <dt>OUTCOME</dt><dd>The team's game ships with a playable build you can install and try.</dd>
+        </dl>
+        <div class="tags"><span class="raised">TEAM GAME</span><span class="raised">TOOLS</span><span class="raised">C++</span></div>
+        <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/rock-and-ghoul/releases/latest">Download installer (Windows, 650 MB) â†“</a></div>
       </section>
     </div>
   </article>
 
   <article class="win raised demo" id="w-demo">
-    <div class="titlebar"><h2>NAV_DEMO.EXE</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="titlebar"><h2>NAV_DEMO.EXE</h2><button class="x raised" type="button" aria-label="Minimise">âœ•</button></div>
     <div class="sunken" style="margin:3px"><canvas id="nav" aria-label="Pathfinding demo. Click or tap the grid to set a goal."></canvas></div>
     <div class="statusbar">
       <span>click to set goal</span>
@@ -270,7 +283,7 @@ a { color: var(--violet); }
   </article>
 
   <article class="win raised" id="w-also">
-    <div class="titlebar"><h2>ALSO_BUILT.TXT — Notepad</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="titlebar"><h2>ALSO_BUILT.TXT â€” Notepad</h2><button class="x raised" type="button" aria-label="Minimise">âœ•</button></div>
     <div class="pane sunken notepad">
       <p><b>collision + spatial partitioning</b><br>AABB vs 3 bounding-sphere methods (Ritter, centroid, Larsson). BVH + BSP trees. C++.</p>
       <p><b>cutscene editor</b><br>In-engine tool for my team's game. Designers author and preview cutscenes without code.</p>
@@ -279,7 +292,7 @@ a { color: var(--violet); }
   </article>
 
   <article class="win raised" id="w-status">
-    <div class="titlebar"><h2>STATUS</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="titlebar"><h2>STATUS</h2><button class="x raised" type="button" aria-label="Minimise">âœ•</button></div>
     <div class="pane alert">
       <span class="icon">i</span>
       <div>
@@ -331,7 +344,7 @@ a { color: var(--violet); }
     w.querySelector('.x').addEventListener('click', () => {
       w.hidden = true;
       const b = document.createElement('button');
-      b.type = 'button'; b.className = 'btn min raised'; b.textContent = '▢ ' + names[w.id];
+      b.type = 'button'; b.className = 'btn min raised'; b.textContent = 'â–¢ ' + names[w.id];
       b.addEventListener('click', () => { w.hidden = false; b.remove(); focusWin(w); fitDesk(); });
       document.getElementById('tray').appendChild(b);
       fitDesk();
@@ -346,11 +359,11 @@ a { color: var(--violet); }
   }
 
   // project tabs (taskbar + window share state)
-  const titles = { path: 'pathfinding.doc', bt: 'game_ai.doc', gfx: 'graphics.doc' };
+  const titles = { path: 'pathfinding.doc', bt: 'game_ai.doc', gfx: 'graphics.doc', game: 'team_game.doc' };
   function showTab(t) {
     document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
     document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t);
-    document.getElementById('proj-title').textContent = 'PROJECTS — ' + titles[t];
+    document.getElementById('proj-title').textContent = 'PROJECTS â€” ' + titles[t];
     fitDesk();
   }
   document.querySelectorAll('#ptabs [data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
