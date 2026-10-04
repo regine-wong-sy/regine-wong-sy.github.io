@@ -159,7 +159,6 @@ a { color: var(--violet); }
   <div class="scroll" id="tabs">
     <button class="btn tab raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
     <button class="btn tab raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
-    <button class="btn tab raised" type="button" data-tab="hide" aria-pressed="false">hide &amp; seek</button>
     <button class="btn tab raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
     <button class="btn tab raised" type="button" data-tab="game" aria-pressed="false">team game</button>
     <button class="btn raised" type="button" id="plus" aria-label="More projects">+</button>
@@ -216,7 +215,6 @@ a { color: var(--violet); }
     <div class="ptabs" id="ptabs">
       <button class="btn raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
       <button class="btn raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
-      <button class="btn raised" type="button" data-tab="hide" aria-pressed="false">hide &amp; seek</button>
       <button class="btn raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
       <button class="btn raised" type="button" data-tab="game" aria-pressed="false">team game</button>
     </div>
@@ -244,17 +242,6 @@ a { color: var(--violet); }
         </dl>
         <div class="tags"><span class="raised">BEHAVIOUR TREES</span><span class="raised">BLACKBOARD</span><span class="raised">C++</span></div>
         <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/cs380-noise-pollution/releases/latest">Download demo (Windows, 24 MB) ↓</a></div>
-      </section>
-      <section class="project" data-panel="hide" hidden>
-        <h3>Terrain analysis and hide-and-seek AI</h3>
-        <div class="meta">CS380 · C++ · course project</div>
-        <dl class="write">
-          <dt>PROBLEM</dt><dd>Give an agent a sense of the map: where is open ground, what can see what, and where might the player be hiding.</dd>
-          <dt>APPROACH</dt><dd>Grid layers for how open each cell is and what is visible from where, built with line-of-sight tests against wall boundaries. On top of that, an enemy with a field-of-view cone keeps a search layer, an influence map of where the player might be, which spreads out and fades with distance and time.</dd>
-          <dt>OUTCOME</dt><dd>An enemy that watches for the player and, once it loses sight of them, seeks out the likeliest spot instead of standing still.</dd>
-          <dt>LEARNED</dt><dd>Most of the bugs were quiet ones. The detection radius was measured in world units instead of grid tiles, so it was smaller than one tile. The enemy froze when it targeted its own tile or a wall tile it could never reach. And the search layer filled with red once its normalisation cancelled out the decay.</dd>
-        </dl>
-        <div class="tags"><span class="raised">INFLUENCE MAPS</span><span class="raised">LINE OF SIGHT</span><span class="raised">C++</span></div>
       </section>
       <section class="project" data-panel="gfx" hidden>
         <h3>OpenGL shaders showcase</h3>
@@ -373,7 +360,7 @@ a { color: var(--violet); }
   }
 
   // project tabs (taskbar + window share state)
-  const titles = { path: 'pathfinding.doc', bt: 'game_ai.doc', hide: 'hide_and_seek.doc', gfx: 'graphics.doc', game: 'team_game.doc' };
+  const titles = { path: 'pathfinding.doc', bt: 'game_ai.doc', gfx: 'graphics.doc', game: 'team_game.doc' };
   function showTab(t) {
     document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tab === t)));
     document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== t);
