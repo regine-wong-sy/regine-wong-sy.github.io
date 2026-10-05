@@ -67,6 +67,7 @@ a { color: var(--violet); }
 .label { font: 400 1.7rem/1 var(--serif); color: var(--violet); text-decoration: underline; text-underline-offset: 5px; margin: 18px 0 4px; }
 .skills { display: flex; flex-wrap: wrap; gap: 10px; }
 .chip { width: 50px; height: 50px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(from 210deg, var(--c1), var(--c2), var(--c1)); box-shadow: 0 2px 0 var(--chrome-lo); }
+.chip span img { width: 26px; height: 26px; }
 .chip span { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; font: 700 0.66rem var(--tiny); color: var(--ink); }
 .edu { display: grid; gap: 10px; }
 .edu div { line-height: 1.25; }
@@ -175,14 +176,17 @@ a { color: var(--violet); }
 
     <p class="label">skills</p>
     <div class="skills" aria-label="Skills">
-      <span class="chip" style="--c1:#2a4dff;--c2:#8fb0ff" title="C++"><span>C++</span></span>
-      <span class="chip" style="--c1:#6a1fb8;--c2:#d6a6ff" title="C"><span>C</span></span>
-      <span class="chip" style="--c1:#d63c86;--c2:#ffb3d4" title="OpenGL"><span>GL</span></span>
+      <span class="chip" style="--c1:#2a4dff;--c2:#8fb0ff" title="C++"><span><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++"></span></span>
+      <span class="chip" style="--c1:#6a1fb8;--c2:#d6a6ff" title="C"><span><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg" alt="C"></span></span>
+      <span class="chip" style="--c1:#d63c86;--c2:#ffb3d4" title="OpenGL"><span><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/opengl/opengl-original.svg" alt="OpenGL"></span></span>
       <span class="chip" style="--c1:#0f8a6a;--c2:#9be5cf" title="GLSL"><span>GLSL</span></span>
-      <span class="chip" style="--c1:#d98a00;--c2:#ffe08a" title="Python"><span>PY</span></span>
-      <span class="chip" style="--c1:#2a2a33;--c2:#a3a2ae" title="Git"><span>GIT</span></span>
-      <span class="chip" style="--c1:#1b74c9;--c2:#a9d4ff" title="Visual Studio"><span>VS</span></span>
+      <span class="chip" style="--c1:#d98a00;--c2:#ffe08a" title="Python"><span><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"></span></span>
+      <span class="chip" style="--c1:#2a2a33;--c2:#a3a2ae" title="Git"><span><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git"></span></span>
+      <span class="chip" style="--c1:#1b74c9;--c2:#a9d4ff" title="Visual Studio"><span><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visualstudio/visualstudio-plain.svg" alt="Visual Studio"></span></span>
     </div>
+
+    <p class="label">currently learning</p>
+    <p class="intro">Backend development on <a href="https://www.boot.dev" target="_blank" rel="noopener">Boot.dev</a>.</p>
 
     <p class="label">education</p>
     <div class="edu">
