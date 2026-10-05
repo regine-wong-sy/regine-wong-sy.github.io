@@ -98,6 +98,10 @@ a { color: var(--violet); }
 .soc span:last-child { overflow-wrap: anywhere; }
 .soc:hover { background: var(--title-a); color: #fff; }
 .glyph { width: 28px; height: 28px; flex: none; display: grid; place-items: center; font: 700 0.7rem var(--tiny); background: var(--ink); color: #fff; border-radius: 7px; }
+.glyph.logo { background: #fff; }
+.glyph.logo img { width: 100%; height: 100%; }
+.glyph.logo { border: 1px solid #d6d6e0; }
+.glyph.logo img { padding: 2px; box-sizing: border-box; }
 .soc:hover .glyph { background: #fff; color: var(--title-a); }
 
 /* projects */
@@ -206,10 +210,10 @@ a { color: var(--violet); }
   <article class="win raised" id="w-social">
     <div class="titlebar"><h2>SOCIALS</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
     <div class="socials">
-      <a class="soc" href="https://github.com/regine-wong-sy"><span class="glyph">GH</span><span>@regine-wong-sy</span></a>
-      <a class="soc" href="https://www.linkedin.com/in/wsy-regine"><span class="glyph">IN</span><span>Regine Wong</span></a>
-      <a class="soc" href="mailto:reginewong1809@gmail.com"><span class="glyph">@</span><span>reginewong1809@gmail.com</span></a>
-      <a class="soc" href="resume.pdf"><span class="glyph">CV</span><span>resume.pdf</span></a>
+      <a class="soc" href="https://github.com/regine-wong-sy"><span class="glyph logo"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub"></span><span>@regine-wong-sy</span></a>
+      <a class="soc" href="https://www.linkedin.com/in/wsy-regine"><span class="glyph logo"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn"></span><span>Regine Wong</span></a>
+      <a class="soc" href="mailto:reginewong1809@gmail.com"><span class="glyph logo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#14141c" stroke-width="2" stroke-linejoin="round" aria-label="Email"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 7 9-7"/></svg></span><span>reginewong1809@gmail.com</span></a>
+      <a class="soc" href="resume.pdf"><span class="glyph logo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#14141c" stroke-width="2" stroke-linejoin="round" aria-label="Resume"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg></span><span>resume.pdf</span></a>
     </div>
   </article>
 
