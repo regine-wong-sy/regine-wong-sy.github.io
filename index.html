@@ -167,10 +167,10 @@ a { color: var(--violet); }
   <button class="btn start raised" id="start" type="button">Start</button>
   <span class="sep"></span>
   <div class="scroll" id="tabs">
-    <button class="btn tab raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
+    <button class="btn tab raised" type="button" data-tab="game" aria-pressed="true">team game</button>
+    <button class="btn tab raised" type="button" data-tab="path" aria-pressed="false">pathfinding</button>
     <button class="btn tab raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
     <button class="btn tab raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
-    <button class="btn tab raised" type="button" data-tab="game" aria-pressed="false">team game</button>
     <button class="btn raised" type="button" id="plus" aria-label="More projects">+</button>
     <span id="tray" style="display:contents"></span>
   </div>
@@ -235,16 +235,16 @@ a { color: var(--violet); }
   </article>
 
   <article class="win raised" id="w-proj">
-    <div class="titlebar"><h2 id="proj-title">PROJECTS — pathfinding.doc</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
+    <div class="titlebar"><h2 id="proj-title">PROJECTS — team_game.doc</h2><button class="x raised" type="button" aria-label="Minimise">✕</button></div>
     <div class="menubar"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>H</u>elp</span></div>
     <div class="ptabs" id="ptabs">
-      <button class="btn raised" type="button" data-tab="path" aria-pressed="true">pathfinding</button>
+      <button class="btn raised" type="button" data-tab="game" aria-pressed="true">team game</button>
+      <button class="btn raised" type="button" data-tab="path" aria-pressed="false">pathfinding</button>
       <button class="btn raised" type="button" data-tab="bt" aria-pressed="false">game ai</button>
       <button class="btn raised" type="button" data-tab="gfx" aria-pressed="false">graphics</button>
-      <button class="btn raised" type="button" data-tab="game" aria-pressed="false">team game</button>
     </div>
     <div class="pane sunken">
-      <section class="project" data-panel="path">
+      <section class="project" data-panel="path" hidden>
         <h3>A* pathfinding</h3>
         <div class="meta">CS380 · C++ · course project</div>
         <dl class="write">
@@ -281,7 +281,7 @@ a { color: var(--violet); }
         <div class="tags"><span class="raised">OPENGL</span><span class="raised">GLSL</span><span class="raised">DEFERRED</span></div>
         <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase/releases/latest">Download (Windows) ↓</a><a class="btn raised" href="https://github.com/regine-wong-sy/opengl-shaders-showcase">Source ↗</a></div>
       </section>
-      <section class="project" data-panel="game" hidden>
+      <section class="project" data-panel="game">
         <h3>Rock &amp; Ghoul</h3>
         <div class="meta">CSD2451 · C++17 · team game on a custom engine</div>
         <figure class="shot sunken"><video controls preload="metadata" playsinline aria-label="Rock &amp; Ghoul trailer"><source src="video/rock-and-ghoul-trailer.mp4" type="video/mp4"></video></figure>
