@@ -142,7 +142,7 @@ a { color: var(--violet); }
 /* positions on wide screens (percent of desktop width) */
 #w-photo   { left: 49%; top: 46px;   width: 34%; }
 #w-social  { left: 65%; top: 410px;  width: 34%; }
-#w-proj    { left: 1%;  top: 1400px;  width: 55%; }
+#w-proj    { left: 1%;  top: 1100px;  width: 55%; }
 #w-demo    { left: 58%; top: 780px;  width: 41%; }
 #w-also    { left: 60%; top: 1250px; width: 36%; }
 #w-status  { left: 66%; top: 1540px; width: 32%; }
@@ -344,6 +344,8 @@ a { color: var(--violet); }
   }
   function fitDesk() {
     if (!wide.matches) { desk.style.minHeight = ''; return; }
+    const proj = document.getElementById('w-proj');
+    if (!proj.dataset.moved) proj.style.top = (document.querySelector('.printed').offsetTop + document.querySelector('.printed').offsetHeight + 40) + 'px';
     let max = 0;
     [...wins, document.querySelector('.printed')].forEach(el => { if (!el.hidden) max = Math.max(max, el.offsetTop + el.offsetHeight); });
     desk.style.minHeight = (max + 60) + 'px';
@@ -358,6 +360,7 @@ a { color: var(--violet); }
       const sx = e.clientX, sy = e.clientY, ox = w.offsetLeft, oy = w.offsetTop;
       bar.setPointerCapture(e.pointerId); bar.style.cursor = 'grabbing';
       const move = ev => {
+        w.dataset.moved = '1';
         const maxX = desk.clientWidth - 80;
         w.style.left = Math.max(-w.offsetWidth + 80, Math.min(maxX, ox + ev.clientX - sx)) + 'px';
         w.style.top = Math.max(0, oy + ev.clientY - sy) + 'px';
