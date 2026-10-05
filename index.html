@@ -90,7 +90,12 @@ a { color: var(--violet); }
 .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(.35) contrast(1.18) brightness(1.04); }
 .photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(110,130,255,.12), rgba(255,255,255,.08)); mix-blend-mode: screen; pointer-events: none; }
 .photo .ph { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font: 400 0.8rem var(--tiny); color: var(--muted); padding: 20px; }
+.photo img[hidden] { display: none; }
 .photo .ph b { display: block; font: 700 4.2rem/1 var(--pixel); color: var(--title-a); margin-bottom: 10px; }
+
+.pcar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 3px 3px 3px; }
+.pcar[hidden] { display: none; }
+.pcar span { font: 400 0.78rem var(--tiny); font-variant-numeric: tabular-nums; }
 
 /* socials */
 .socials { display: grid; gap: 4px; padding: 10px 12px; }
@@ -207,6 +212,15 @@ a { color: var(--violet); }
     <div class="photo sunken">
       <div class="ph"><div><b>:)</b>add img/me.jpg</div></div>
       <img src="img/me.jpg" alt="Portrait of Regine" onerror="this.remove()">
+      <img src="img/me2.jpg" alt="Photo 2 of Regine" onerror="this.remove()" hidden>
+      <img src="img/me3.jpg" alt="Photo 3 of Regine" onerror="this.remove()" hidden>
+      <img src="img/me4.jpg" alt="Photo 4 of Regine" onerror="this.remove()" hidden>
+      <img src="img/me5.jpg" alt="Photo 5 of Regine" onerror="this.remove()" hidden>
+    </div>
+    <div class="pcar" id="pcar" hidden>
+      <button class="btn min raised" type="button" id="p-prev" aria-label="Previous photo">‹</button>
+      <span id="p-count" aria-live="polite">1 / 1</span>
+      <button class="btn min raised" type="button" id="p-next" aria-label="Next photo">›</button>
     </div>
   </article>
 
@@ -498,6 +512,27 @@ a { color: var(--violet); }
   let gx = 26, gy = 17; while (wall[gy][gx]) gx--;
   goTo(gx, gy); t = reduce ? spline.length - 1 : spline.length * .45;
   draw();
+})();
+</script>
+<script>
+/* MEET-REGINE carousel: add more <img> tags inside .photo (e.g. img/me2.jpg) and it picks them up. */
+(() => {
+  const box = document.querySelector('#w-photo .photo');
+  const bar = document.getElementById('pcar');
+  const count = document.getElementById('p-count');
+  let imgs = [...box.querySelectorAll('img')], i = 0;
+  function show() {
+    imgs = imgs.filter(im => im.isConnected);
+    if (!imgs.length) return;
+    i = (i + imgs.length) % imgs.length;
+    imgs.forEach((im, n) => im.hidden = n !== i);
+    bar.hidden = imgs.length < 2;
+    count.textContent = (i + 1) + ' / ' + imgs.length;
+  }
+  imgs.forEach(im => im.addEventListener('error', () => setTimeout(show)));
+  document.getElementById('p-prev').addEventListener('click', () => { i--; show(); });
+  document.getElementById('p-next').addEventListener('click', () => { i++; show(); });
+  show();
 })();
 </script>
 </body>
