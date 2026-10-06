@@ -110,12 +110,22 @@ a { color: var(--violet); }
 .soc:hover .glyph { background: #fff; color: var(--title-a); }
 
 /* projects */
-.ptabs { display: flex; gap: 2px; padding: 6px 6px 0; flex-wrap: wrap; }
-.ptabs .btn { font-family: var(--body); font-style: italic; padding: 5px 12px; }
+.ptabs { display: flex; gap: 3px; padding: 6px 6px 0; flex-wrap: wrap; position: relative; z-index: 1; }
+.ptabs .btn { font-family: var(--body); font-style: italic; padding: 6px 16px 5px; background: #c4c3cb; color: var(--muted); border-radius: 6px 6px 0 0; margin-top: 3px; }
+.ptabs .btn:active { box-shadow: inset -1px -1px 0 var(--chrome-dk), inset 1px 1px 0 var(--chrome-hi), inset -2px -2px 0 var(--chrome-lo); background: #c4c3cb; }
+.ptabs .btn[aria-pressed="true"] { background: var(--chrome); color: var(--ink); font-weight: 600; font-style: normal; margin-top: 0; padding-top: 9px; margin-bottom: -3px; padding-bottom: 8px; position: relative; z-index: 2; box-shadow: inset -1px 0 0 var(--chrome-dk), inset 1px 1px 0 var(--chrome-hi), inset -2px 0 0 var(--chrome-lo); }
+.ptabs .btn[aria-pressed="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 4px; background: var(--chrome); }
 .project h3 { font: 400 clamp(1.7rem, 2.8vw, 2.2rem)/1.05 var(--serif); margin: 0 0 4px; color: var(--violet); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 2px; }
 .project .meta { font: 400 0.74rem var(--tiny); color: var(--muted); margin-bottom: 12px; }
 .shot { aspect-ratio: 16 / 9; max-width: 100%; margin: 0 0 14px; position: relative; display: grid; place-items: center; background: repeating-linear-gradient(45deg, #f2f2f6 0 10px, #e9e9ef 10px 20px); }
 .shot img, .shot video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.shot .slide { position: absolute; inset: 0; }
+.shot .slide[hidden] { display: none; }
+.shot.car { background: #14141c; }
+.shot.car img, .shot.car video { object-fit: contain; }
+.write ul { margin: 6px 0; padding-left: 18px; }
+.write li { margin-bottom: 4px; }
+.cap { font: 400 0.74rem var(--tiny); color: var(--muted); margin: 6px 3px 14px; min-height: 1.2em; }
 .shot figcaption { font: 400 0.74rem var(--tiny); color: var(--muted); }
 .write { display: grid; grid-template-columns: 92px 1fr; gap: 6px 14px; margin: 0 0 14px; }
 .write dt { font: 700 0.72rem var(--tiny); color: var(--pink); padding-top: 3px; }
@@ -258,13 +268,54 @@ a { color: var(--violet); }
       </section>
       <section class="project" data-panel="bt" hidden>
         <h3>Outdoor noise pollution</h3>
-        <div class="meta">CS380 · C++ · course project</div>
-        <dl class="write">
-          <dt>PROBLEM</dt><dd>Build a lively scene out of behaviour trees: agents that react to each other and to mouse clicks.</dd>
-          <dt>APPROACH</dt><dd>I wrote 15 nodes (a looping sequencer, repeat-until-fail and timer decorators, and leaves such as wave, jump, spin, spawn ball and kill nearest) and combined them into five trees, with the framework's blackboard sharing data between nodes. At an outdoor concert the fans wave, jump and vibe to the music until a giant red killer bird, which waits eight seconds, dives and takes out the noisy crowd. Clicking the map also spawns bouncing balls.</dd>
-          <dt>OUTCOME</dt><dd>A scene built entirely from reusable nodes. New behaviour means a new tree, not new control code.</dd>
-          <dt>LEARNED</dt><dd>Getting the bird's celebration to play once without restarting the whole tree took the most time, and so did tracing how mouse input travels from the framework into a leaf node.</dd>
-        </dl>
+        <div class="meta">CS380 &middot; C++ &middot; course project</div>
+        <figure class="shot sunken car" id="ai-car">
+          <div class="slide" data-cap="The concert scene: band, fans, trees and mic stands"><img src="img/ai-scene.png" alt="Outdoor concert scene with fans in front of a stage, surrounded by pine trees"></div>
+          <div class="slide" data-cap="Click the map to spawn bouncing balls" hidden><img src="img/ai-balls.png" alt="Coloured balls bouncing over the stage after mouse clicks"></div>
+          <div class="slide" data-cap="The BallsBounce tree in the behaviour tree editor" hidden><img src="img/ai-tree-balls.png" alt="BallsBounce behaviour tree: loop sequencer, timer decorator, bounce and idle leaves, despawn"></div>
+          <div class="slide" data-cap="The giant red killer bird dives at the crowd" hidden><img src="img/ai-bird.png" alt="A giant red bird attacking the fans on stage"></div>
+          <div class="slide" data-cap="The KILLERBIRD tree in the behaviour tree editor" hidden><img src="img/ai-tree-bird.png" alt="KILLERBIRD behaviour tree: bird timer, move to random position, repeat until fail around kill nearest, spin selector"></div>
+        </figure>
+        <div class="pcar">
+          <button class="btn min raised" type="button" id="ai-prev" aria-label="Previous">&lsaquo;</button>
+          <span id="ai-count" aria-live="polite">1 / 5</span>
+          <button class="btn min raised" type="button" id="ai-next" aria-label="Next">&rsaquo;</button>
+        </div>
+        <p class="cap" id="ai-cap"></p>
+        <div class="ai-text">
+          <dl class="write">
+            <dt>THE SCENE</dt><dd>An outdoor concert built on the course's behaviour tree framework. <code>Setup.cpp</code> creates the agents: four band members on the Vibing tree, 20 fans on the Fans tree, a ring of pine trees, three mic stands, a giant red bird and a ball spawner. Fans jump, wave and vibe to the music until the bird arrives.</dd>
+            <dt>MY NODES</dt><dd>I wrote 15 nodes: a looping sequencer (<code>C_LoopSequencer</code>), two decorators (<code>D_Timer</code>, <code>D_RepeatUntilFail</code>) and 12 leaves such as wave, jump, spin, spawn ball and kill nearest. Each is registered in <code>Nodes.def</code> and then shows up in the tree editor's node list.</dd>
+            <dt>OUTCOME</dt><dd>Five trees built from reusable nodes. New behaviour means a new tree, not new control code.</dd>
+          </dl>
+        </div>
+        <div class="ai-text" hidden>
+          <dl class="write">
+            <dt>CLICK TO SPAWN</dt><dd>In the Balls tree, <code>L_CheckMouseClick</code> stores the click position on the blackboard. <code>L_SpawnBall</code> reads that <code>"Click Position"</code> value and creates a new agent running the BallsBounce tree there, with a random colour, scale 0.5 and speed 30.</dd>
+            <dt>BOUNCE PHYSICS</dt><dd><code>L_BounceAround</code> launches the ball in a random direction with a random speed, applies gravity of &minus;90 each frame scaled by <code>dt</code>, and keeps 75% of its vertical speed on every ground bounce. It reflects off the four map edges with a small random change in speed, and succeeds after 5 to 10 seconds.</dd>
+            <dt>LEARNED</dt><dd>Tracing how mouse input travels from the framework through the blackboard into a leaf node took the longest to understand.</dd>
+          </dl>
+        </div>
+        <div class="ai-text" hidden>
+          <dl class="write">
+            <dt>BALL LIFETIME</dt><dd>The BallsBounce tree is a <code>C_LoopSequencer</code>. First a <code>D_Timer</code> repeats a bounce-then-idle sequence for a few seconds, then one more bounce and idle, then <code>L_Despawn</code> removes the ball.</dd>
+            <dt>C_LOOPSEQUENCER</dt><dd>Runs its children in order and fails if any child fails. When the last child succeeds, it resets every child to READY and starts again from index 0, so a tree can loop forever without a special root.</dd>
+            <dt>D_TIMER</dt><dd>Picks a random 3 to 6 second countdown on enter and ticks its child. Whenever the child finishes it is reset to READY so it repeats, and the decorator succeeds when the time runs out.</dd>
+          </dl>
+        </div>
+        <div class="ai-text" hidden>
+          <dl class="write">
+            <dt>KILLER BIRD</dt><dd><code>L_BirdTimer</code> waits eight seconds before the attack starts. <code>L_KillNearest</code> then scans every agent, keeps only the ones with the Man model, and chases the nearest with <code>move_toward_point</code>. Within 5 units it plays a sound, destroys the target and succeeds, so the next human is picked.</dd>
+            <dt>SCENE CUES</dt><dd>The leaf also stops the concert music when the hunt begins, which is why the crowd goes quiet.</dd>
+          </dl>
+        </div>
+        <div class="ai-text" hidden>
+          <dl class="write">
+            <dt>THE TREE</dt><dd>A <code>C_Sequencer</code> runs the bird timer, a move to a random position, a <code>D_RepeatUntilFail</code> around <code>L_KillNearest</code>, then a selector that spins. The decorator resets its child every time it succeeds, and succeeds itself once the child fails, so the hunt repeats until nobody is left.</dd>
+            <dt>CELEBRATION</dt><dd>When no human is left, <code>L_KillNearest</code> plays a cheer and lifts the bird upwards for one second, then fails on purpose to end the loop. A <code>celebrationDone</code> flag makes later runs skip the celebration, so it plays exactly once.</dd>
+            <dt>LEARNED</dt><dd>Getting the celebration to play once without restarting the whole tree took the most time.</dd>
+          </dl>
+        </div>
         <div class="tags"><span class="raised">BEHAVIOUR TREES</span><span class="raised">BLACKBOARD</span><span class="raised">C++</span></div>
         <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/cs380-noise-pollution/releases/latest">Download demo (Windows, 24 MB) ↓</a></div>
       </section>
@@ -284,14 +335,62 @@ a { color: var(--violet); }
       <section class="project" data-panel="game">
         <h3>Rock &amp; Ghoul</h3>
         <div class="meta">CSD2451 · C++17 · team game on a custom engine</div>
-        <figure class="shot sunken"><video controls preload="metadata" playsinline aria-label="Rock &amp; Ghoul trailer"><source src="video/rock-and-ghoul-trailer.mp4" type="video/mp4"></video></figure>
-        <dl class="write">
-          <dt>ROLE</dt><dd>Tech lead and programmer on Team Avid Divas, a team of eight. I built much of the engine's editor tooling.</dd>
-          <dt>THE GAME</dt><dd>You play Rock, half of a guitar duo. Spirits attack before a gig, and you fight them with melee swings and spells cast by arrow-key sequences.</dd>
-          <dt>ENGINE</dt><dd>A custom C++17 engine with FMOD audio, C# scripting through Mono and FFmpeg video cutscenes, plus a dockable ImGui editor so designers can build levels and cutscenes without touching code.</dd>
-          <dt>MY PART</dt><dd>I wrote about half of the editor code (roughly 8,000 lines, shared with two teammates). It covers the game view with play/stop testing, scene manager, entity inspector and prefabs, asset browsers, and a build-size analyzer. I also wrote the undo/redo system on my own. It covers adding and deleting entities, gizmo moves, and any component property, and keeps the last 30 actions. The editor can also create a new game from scratch: it sets up the project folders, audio manifest, default font and a starter <code>main.cpp</code>, then switches to it.</dd>
-          <dt>OUTCOME</dt><dd>A playable build with menus, audio and cinematics that you can install and try.</dd>
-        </dl>
+        <figure class="shot sunken car" id="tg-car">
+          <div class="slide" data-cap="Official trailer">
+            <video controls preload="metadata" playsinline aria-label="Rock &amp; Ghoul trailer">
+              <source src="video/rock-and-ghoul-trailer.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="slide" data-cap="The editor: game view, entity inspector, collision matrix, profiler" hidden><img src="img/game1.png" alt="The dockable ImGui editor with game view, entity inspector and engine profiler"></div>
+          <div class="slide" data-cap="Prefab editing: update every placed instance at once" hidden><img src="img/game2.png" alt="Prompt asking whether to update all instances of a replaced prefab"></div>
+          <div class="slide" data-cap="Gizmos for moving, rotating and scaling entities (all undoable)" hidden><img src="img/game3.png" alt="Scale, rotate and move gizmos on entities in the editor"></div>
+          <div class="slide" data-cap="Build-size analyzer, collision layers and render-layer tools" hidden><img src="img/game4.png" alt="Build size analyzer, collision layer matrix and render layer visibility panels"></div>
+        </figure>
+        <div class="pcar">
+          <button class="btn min raised" type="button" id="tg-prev" aria-label="Previous">‹</button>
+          <span id="tg-count" aria-live="polite">1 / 5</span>
+          <button class="btn min raised" type="button" id="tg-next" aria-label="Next">›</button>
+        </div>
+        <p class="cap" id="tg-cap"></p>
+        <div class="tg-text">
+          <dl class="write">
+            <dt>THE GAME</dt><dd>Rock &amp; Ghoul is a 2D action game by Team Avid Divas, a team of eight. You play Rock, half of a guitar duo, fighting spirits with melee swings and spells cast by arrow-key sequences.</dd>
+            <dt>MY ROLE</dt><dd>Tech lead and programmer. I wrote about half of the engine's editor (roughly 8,000 lines, shared with two teammates) and the whole undo/redo system. The next slides walk through it.</dd>
+            <dt>STACK</dt><dd>Custom C++17 engine with FMOD audio, C# scripting through Mono, FFmpeg video cutscenes and a dockable Dear ImGui editor.</dd>
+            <dt>OUTCOME</dt><dd>A playable build with menus, audio and cinematics that you can install and try.</dd>
+          </dl>
+        </div>
+        <div class="tg-text" hidden>
+          <dl class="write">
+            <dt>EDITOR</dt><dd>A dockable ImGui editor so designers can build levels and cutscenes without touching code. I wrote about half of it (roughly 8,000 lines, shared with two teammates).</dd>
+            <dt>MY PARTS</dt><dd>Game view with play/stop testing, scene manager, entity inspector and prefabs, and the asset browsers.</dd>
+            <dt>NEW PROJECTS</dt><dd>The editor can create a new game from scratch: it sets up the project folders, audio manifest, default font and a starter <code>main.cpp</code>, then switches to it.</dd>
+          </dl>
+        </div>
+        <div class="tg-text" hidden>
+          <dl class="write">
+            <dt>PREFABS</dt><dd>Entities can be saved as prefab JSON files and spawned from the editor. When you overwrite a prefab, a modal asks &ldquo;Update existing instances?&rdquo;. On &ldquo;Yes, Update All&rdquo;, the editor finds every entity with the same name (case-insensitive) in the registry and deletes each one. It then respawns it from the saved prefab file at the old position, skipping the entity you just edited.</dd>
+            <dt>INSPECTOR</dt><dd>The inspector lists each entity's components so designers can add, remove and tweak them live. Edits go through the undo system.</dd>
+          </dl>
+        </div>
+        <div class="tg-text" hidden>
+          <dl class="write">
+            <dt>GIZMOS</dt><dd>Built on ImGuizmo with an orthographic camera. The editor builds a T&middot;R&middot;S model matrix from the entity's <code>TransformComponent</code>, and ImGuizmo edits it. The result is decomposed back into position, rotation and scale. <code>W</code>, <code>E</code> and <code>R</code> switch between move, rotate and scale, and the collider hitboxes are re-synced every frame while dragging.</dd>
+            <dt>UNDO / REDO</dt><dd>A singleton <code>UndoSystem</code> that I wrote on my own, with a stack capped at 30 actions. There are three action types:
+              <ul>
+                <li><b>Add / Remove</b> store a <code>SavedEntity</code> snapshot, so deleting and undoing rebuilds the entity from its serialized form.</li>
+                <li><b>Modify</b> is for gizmo drags. <code>BeginModify</code> snapshots the transform when the drag starts and <code>EndModify</code> stores the final one, so a whole drag is one undo step.</li>
+                <li><b>ComponentProperty</b> is generic. The caller passes an undo lambda and a redo lambda, so any float, int or bool property on any component is undoable without a new action type.</li>
+              </ul>
+              The redo stack clears whenever a new action is recorded. The gizmo locks onto the entity at drag start, so changing selection mid-drag can't corrupt the undo entry.</dd>
+          </dl>
+        </div>
+        <div class="tg-text" hidden>
+          <dl class="write">
+            <dt>BUILD SIZE</dt><dd>The analyzer scans the game's <code>Assets</code> folder and lists every file with its size. You tick the files you want, and it shows a live total and file count. Selections are saved to disk after every toggle. &ldquo;Export&rdquo; mirrors the selected files' folder structure into a destination folder using <code>std::filesystem</code>, and reports how many files were copied and how many failed. This is how I trimmed the shipped build.</dd>
+            <dt>TOOLING</dt><dd>The collision layer matrix works on layers stored as bits in a 32-bit mask. Each checkbox flips whether two layers collide, and the settings save to <code>CollisionSettings.json</code>. The render-layer panel toggles layer visibility and shows how many entities sit on each layer. A third panel is the asset preview browser.</dd>
+          </dl>
+        </div>
         <div class="tags"><span class="raised">CUSTOM ENGINE</span><span class="raised">IMGUI</span><span class="raised">FMOD</span><span class="raised">MONO</span></div>
         <div class="plinks"><a class="btn raised" href="https://github.com/regine-wong-sy/rock-and-ghoul/releases/latest">Download installer (Windows, 650 MB) ↓</a></div>
       </section>
@@ -537,6 +636,34 @@ a { color: var(--violet); }
   document.getElementById('p-prev').addEventListener('click', () => { i--; show(); });
   document.getElementById('p-next').addEventListener('click', () => { i++; show(); });
   show();
+})();
+</script>
+<script>
+(() => {
+  function carousel(p) {
+    const slides = [...document.querySelectorAll('#' + p + '-car .slide')];
+    const texts = [...document.querySelectorAll('.' + p + '-text')];
+    const count = document.getElementById(p + '-count');
+    let i = 0;
+
+    function show() {
+      i = (i + slides.length) % slides.length;
+      slides.forEach((s, n) => {
+        s.hidden = n !== i;
+        const v = s.querySelector('video');
+        if (v && n !== i) v.pause();
+      });
+      texts.forEach((t, n) => t.hidden = n !== i);
+      count.textContent = (i + 1) + ' / ' + slides.length;
+      document.getElementById(p + '-cap').textContent = slides[i].dataset.cap || '';
+    }
+
+    document.getElementById(p + '-prev').addEventListener('click', () => { i--; show(); });
+    document.getElementById(p + '-next').addEventListener('click', () => { i++; show(); });
+    show();
+  }
+  carousel('tg');
+  carousel('ai');
 })();
 </script>
 </body>
