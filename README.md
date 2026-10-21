@@ -19,12 +19,3 @@ index.html   markup, styles and the canvas demo
 img/         me.jpg (portrait) + project screenshots (behaviour-tree.png, deferred-renderer.png)
 resume.pdf   linked from the contact section
 ```
-
-## Before going live
-
-- [ ] Replace every `your-handle` / `you@example.com` / `your-video` placeholder
-- [ ] Add `img/me.jpg` (square-ish portrait) and project screenshots to `img/`
-- [ ] Add `resume.pdf`, or remove that row
-- [ ] Confirm the DigiPen dates
-- [ ] Check every link opens (broken links are the first thing reviewers notice)
-"# regine-portfolio" 
