@@ -721,9 +721,156 @@
                     transition: none !important;
                 }
             }
+
+            /* hero: name built from walls, an A* agent weaves through it */
+            .pf-track {
+                height: 190vh;
+            }
+            .pf {
+                position: sticky;
+                top: 52px;
+                margin: clamp(8px, 2vw, 16px) clamp(8px, 2vw, 16px) 0;
+            }
+
+            /* scroll effects */
+            .stars {
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                overflow: hidden;
+            }
+            .stars i {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 3px;
+                height: 3px;
+                background: var(--violet);
+                opacity: 0.25;
+            }
+            .xp {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font: 400 0.7rem var(--tiny);
+                white-space: nowrap;
+            }
+            .xp .meter {
+                display: flex;
+                gap: 2px;
+                width: clamp(60px, 12vw, 150px);
+                height: 16px;
+                padding: 2px;
+            }
+            .xp .meter i {
+                flex: 1;
+                background: #e6e5ea;
+            }
+            .xp .meter i.on {
+                background: var(--violet);
+            }
+            .xp .meter i.on:nth-child(even) {
+                background: var(--pink);
+            }
+            .xp .up {
+                color: var(--pink);
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+            .xp .up.show {
+                opacity: 1;
+            }
+            .js .win {
+                opacity: 0;
+            }
+            .js .win.in {
+                opacity: 1;
+                animation: pop 0.35s steps(5, end) both;
+            }
+            @keyframes pop {
+                from {
+                    opacity: 0;
+                    transform: scale(0.86);
+                }
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+            .hello {
+                position: relative;
+            }
+            .hello .cov {
+                position: absolute;
+                inset: -4px;
+                display: grid;
+                grid-template-columns: repeat(12, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+                pointer-events: none;
+            }
+            .hello .cov i {
+                background: var(--desk);
+                transition: opacity 0.05s;
+            }
+            @media (max-width: 899px) {
+                .xp {
+                    display: none;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .pf-track {
+                    height: auto;
+                }
+                .pf {
+                    position: static;
+                }
+                .js .win {
+                    opacity: 1;
+                    animation: none !important;
+                }
+                .stars,
+                .hello .cov {
+                    display: none;
+                }
+            }
+            .pf .bar {
+                display: flex;
+                justify-content: space-between;
+                gap: 8px;
+                padding: 6px 10px;
+                font: 400 0.7rem var(--tiny);
+                color: var(--ink);
+            }
+            .pf canvas {
+                display: block;
+                width: 100%;
+                height: auto;
+                cursor: crosshair;
+                touch-action: none;
+            }
+            .pf .foot {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 10px;
+                font: 400 0.7rem var(--tiny);
+                color: var(--muted);
+            }
+            .pf .foot .btn {
+                padding: 4px 10px;
+                font-size: 0.7rem;
+            }
+            .pf .foot .stat {
+                margin-left: auto;
+                text-transform: uppercase;
+            }
         </style>
     </head>
     <body>
+        <script>
+            document.documentElement.classList.add('js');
+        </script>
         <div class="taskbar raised" role="toolbar" aria-label="Taskbar">
             <button class="btn start raised" id="start" type="button">Start</button>
             <span class="sep"></span>
@@ -745,7 +892,28 @@
                 </button>
                 <span id="tray" style="display: contents"></span>
             </div>
+            <span class="xp" aria-hidden="true">
+                <span>XP</span>
+                <span class="meter sunken" id="xpMeter"></span>
+                <span id="xpLv">LV 1</span>
+                <span class="up" id="xpUp">LEVEL UP!</span>
+            </span>
             <span class="clock sunken" id="clock">--/--/---- --:--</span>
+        </div>
+
+        <div class="stars" id="stars" aria-hidden="true"></div>
+
+        <div class="pf-track" id="pfTrack">
+            <section class="pf raised" aria-label="Pathfinding demo: scroll to walk the agent through my name, or click to send it somewhere">
+                <div class="bar"><span>regine.exe</span><span>A* running…</span></div>
+                <canvas class="sunken" id="pfCanvas" width="740" height="340"></canvas>
+                <div class="foot">
+                    <button class="btn raised" type="button" id="pfGoal" aria-pressed="true">set goal</button>
+                    <button class="btn raised" type="button" id="pfWall" aria-pressed="false">draw walls</button>
+                    <button class="btn raised" type="button" id="pfReset">reset</button>
+                    <span class="stat" id="pfStat">scroll to walk the agent</span>
+                </div>
+            </section>
         </div>
 
         <main class="desktop" id="desktop">
@@ -2043,6 +2211,314 @@
                 }
                 carousel('tg');
                 carousel('ai');
+            })();
+        </script>
+        <script>
+            (() => {
+                const COLS = 37,
+                    ROWS = 17,
+                    C = 20;
+                const cv = document.getElementById('pfCanvas'),
+                    ctx = cv.getContext('2d'),
+                    stat = document.getElementById('pfStat');
+                const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const FONT = {
+                    R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
+                    E: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+                    G: ['01111', '10000', '10000', '10011', '10001', '10001', '01111'],
+                    I: ['11111', '00100', '00100', '00100', '00100', '00100', '11111'],
+                    N: ['10001', '11001', '10101', '10011', '10001', '10001', '10001']
+                };
+                const track = document.getElementById('pfTrack');
+                let wall, agent, goal, search, pi, tick, mode, paint, scrollMode;
+                mode = 'goal';
+                paint = null;
+
+                // 0..1 progress through the pinned hero
+                function heroProgress() {
+                    const r = track.getBoundingClientRect();
+                    return Math.min(1, Math.max(0, -r.top / (r.height - innerHeight + 60)));
+                }
+
+                function reset() {
+                    wall = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+                    [...'REGINE'].forEach((ch, li) =>
+                        FONT[ch].forEach((row, y) =>
+                            [...row].forEach((v, x) => {
+                                if (v === '1') wall[5 + y][1 + li * 6 + x] = true;
+                            })
+                        )
+                    );
+                    agent = { x: 1, y: 15 };
+                    goal = null;
+                    search = null;
+                    pi = 0;
+                    tick = 0;
+                    scrollMode = !reduce;
+                    stat.textContent = scrollMode
+                        ? 'scroll to walk the agent / or click to steer it'
+                        : 'click anywhere to send the agent';
+                }
+
+                function astar(s, g) {
+                    const key = (x, y) => y * COLS + x,
+                        open = [{ x: s.x, y: s.y, g: 0, f: 0 }],
+                        gs = { [key(s.x, s.y)]: 0 },
+                        from = {},
+                        closed = {},
+                        visited = [];
+                    while (open.length) {
+                        open.sort((a, b) => a.f - b.f);
+                        const n = open.shift(),
+                            k = key(n.x, n.y);
+                        if (closed[k]) continue;
+                        closed[k] = 1;
+                        visited.push([n.x, n.y]);
+                        if (n.x === g.x && n.y === g.y) {
+                            const path = [];
+                            let c = k;
+                            while (c !== undefined) {
+                                path.unshift([c % COLS, Math.floor(c / COLS)]);
+                                c = from[c];
+                            }
+                            return { visited, path, k: 0 };
+                        }
+                        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+                            const x = n.x + dx,
+                                y = n.y + dy;
+                            if (x < 0 || y < 0 || x >= COLS || y >= ROWS || wall[y][x]) continue;
+                            const nk = key(x, y),
+                                ng = n.g + 1;
+                            if (gs[nk] === undefined || ng < gs[nk]) {
+                                gs[nk] = ng;
+                                from[nk] = k;
+                                open.push({ x, y, g: ng, f: ng + Math.abs(x - g.x) + Math.abs(y - g.y) });
+                            }
+                        }
+                    }
+                    return { visited, path: [], k: 0 };
+                }
+
+                function go() {
+                    if (!goal) return;
+                    search = astar({ x: Math.round(agent.x), y: Math.round(agent.y) }, goal);
+                    pi = 0;
+                    if (reduce) search.k = search.visited.length;
+                    stat.textContent = search.path.length
+                        ? 'explored ' + search.visited.length + ' cells / path ' + (search.path.length - 1) + ' steps'
+                        : 'no path: the goal is walled in';
+                }
+
+                function cellAt(e) {
+                    const r = cv.getBoundingClientRect();
+                    return {
+                        x: Math.floor(((e.clientX - r.left) / r.width) * COLS),
+                        y: Math.floor(((e.clientY - r.top) / r.height) * ROWS)
+                    };
+                }
+
+                function act(e) {
+                    const c = cellAt(e);
+                    if (c.x < 0 || c.y < 0 || c.x >= COLS || c.y >= ROWS) return;
+                    scrollMode = false;
+                    if (mode === 'goal') {
+                        if (!wall[c.y][c.x]) {
+                            goal = c;
+                            go();
+                        }
+                        return;
+                    }
+                    if (paint === null) paint = !wall[c.y][c.x];
+                    const onAgent = Math.round(agent.x) === c.x && Math.round(agent.y) === c.y,
+                        onGoal = goal && goal.x === c.x && goal.y === c.y;
+                    if (!onAgent && !onGoal && wall[c.y][c.x] !== paint) {
+                        wall[c.y][c.x] = paint;
+                        go();
+                    }
+                }
+
+                cv.addEventListener('pointerdown', (e) => {
+                    paint = null;
+                    cv.setPointerCapture(e.pointerId);
+                    act(e);
+                });
+                cv.addEventListener('pointermove', (e) => {
+                    if (e.buttons && mode === 'wall') act(e);
+                });
+                cv.addEventListener('pointerup', () => (paint = null));
+
+                const bGoal = document.getElementById('pfGoal'),
+                    bWall = document.getElementById('pfWall');
+                function setMode(m) {
+                    mode = m;
+                    bGoal.setAttribute('aria-pressed', m === 'goal');
+                    bWall.setAttribute('aria-pressed', m === 'wall');
+                }
+                bGoal.onclick = () => setMode('goal');
+                bWall.onclick = () => setMode('wall');
+                document.getElementById('pfReset').onclick = () => {
+                    reset();
+                    setTimeout(demo, 300);
+                };
+                function demo() {
+                    goal = { x: 35, y: 1 };
+                    go();
+                }
+
+                function draw() {
+                    tick++;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, 740, 340);
+                    ctx.strokeStyle = 'rgba(27,26,34,.07)';
+                    for (let x = 0; x <= COLS; x++) {
+                        ctx.beginPath();
+                        ctx.moveTo(x * C + 0.5, 0);
+                        ctx.lineTo(x * C + 0.5, 340);
+                        ctx.stroke();
+                    }
+                    for (let y = 0; y <= ROWS; y++) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, y * C + 0.5);
+                        ctx.lineTo(740, y * C + 0.5);
+                        ctx.stroke();
+                    }
+                    if (search) {
+                        const n = search.visited.length;
+                        search.k = Math.min(n, search.k + 5);
+                        for (let i = 0; i < search.k; i++) {
+                            const [x, y] = search.visited[i];
+                            ctx.fillStyle = 'hsla(' + (335 - (i / n) * 70) + ',70%,62%,.38)';
+                            ctx.fillRect(x * C + 1, y * C + 1, C - 1, C - 1);
+                        }
+                        if (search.k >= n && search.path.length) {
+                            ctx.fillStyle = '#d63c86';
+                            search.path.forEach(([x, y], i) => {
+                                if (i >= pi) ctx.fillRect(x * C + 7, y * C + 7, 6, 6);
+                            });
+                            if (scrollMode) {
+                                pi = Math.round(heroProgress() * (search.path.length - 1));
+                                const p = search.path[pi];
+                                agent.x = p[0];
+                                agent.y = p[1];
+                            } else if (tick % 4 === 0 && pi < search.path.length) {
+                                pi++;
+                                const p = search.path[Math.min(pi, search.path.length - 1)];
+                                agent.x = p[0];
+                                agent.y = p[1];
+                            }
+                        }
+                    }
+                    for (let y = 0; y < ROWS; y++)
+                        for (let x = 0; x < COLS; x++)
+                            if (wall[y][x]) {
+                                ctx.fillStyle = '#1b1a22';
+                                ctx.fillRect(x * C + 1, y * C + 1, C - 1, C - 1);
+                                ctx.fillStyle = '#4a4960';
+                                ctx.fillRect(x * C + 2, y * C + 2, C - 3, 3);
+                                ctx.fillRect(x * C + 2, y * C + 2, 3, C - 3);
+                            }
+                    if (goal) {
+                        ctx.fillStyle = '#6a1fb8';
+                        ctx.fillRect(goal.x * C + 4, goal.y * C + 3, 2, 14);
+                        ctx.fillStyle = '#d63c86';
+                        ctx.fillRect(goal.x * C + 6, goal.y * C + 3, 9, 6);
+                    }
+                    const bob = reduce ? 0 : Math.sin(tick / 8) * 1.2;
+                    ctx.fillStyle = '#f5c542';
+                    ctx.fillRect(agent.x * C + 3, agent.y * C + 3 + bob, 14, 14);
+                    ctx.fillStyle = '#1b1a22';
+                    ctx.fillRect(agent.x * C + 6, agent.y * C + 7 + bob, 2, 3);
+                    ctx.fillRect(agent.x * C + 12, agent.y * C + 7 + bob, 2, 3);
+                    requestAnimationFrame(draw);
+                }
+
+                reset();
+                draw();
+                setTimeout(demo, 600);
+            })();
+        </script>
+        <script>
+            // scroll effects: windows pop open, pixel-reveal heading, XP bar, parallax stars
+            (() => {
+                const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (reduce) return;
+
+                // windows pop open every time they scroll into view (up or down)
+                const io = new IntersectionObserver(
+                    (entries) =>
+                        entries.forEach((e) =>
+                            e.target.classList.toggle('in', e.isIntersecting),
+                        ),
+                    { threshold: 0 },
+                );
+                document.querySelectorAll('.win').forEach((w) => io.observe(w));
+
+                // "about me!" reveals in random pixel blocks
+                const hello = document.getElementById('hello');
+                const cov = document.createElement('span');
+                cov.className = 'cov';
+                cov.setAttribute('aria-hidden', 'true');
+                for (let i = 0; i < 72; i++) cov.appendChild(document.createElement('i'));
+                hello.appendChild(cov);
+                const hio = new IntersectionObserver((entries) => {
+                    if (!entries[0].isIntersecting) return;
+                    [...cov.children].forEach((c) => {
+                        c.style.transitionDelay = Math.random() * 600 + 'ms';
+                        c.style.opacity = '0';
+                    });
+                    hio.disconnect();
+                });
+                hio.observe(hello);
+
+                // XP bar in the taskbar fills with page progress
+                const meter = document.getElementById('xpMeter');
+                for (let i = 0; i < 20; i++) meter.appendChild(document.createElement('i'));
+                const segs = [...meter.children],
+                    lvEl = document.getElementById('xpLv'),
+                    up = document.getElementById('xpUp');
+                let lastLv = 1;
+
+                // parallax stars
+                const field = document.getElementById('stars');
+                const stars = Array.from({ length: 26 }, () => {
+                    const s = document.createElement('i');
+                    field.appendChild(s);
+                    return { s, x: Math.random(), y: Math.random(), f: 0.08 + Math.random() * 0.3 };
+                });
+
+                function onScroll() {
+                    const max = document.documentElement.scrollHeight - innerHeight;
+                    const p = max > 0 ? Math.min(1, scrollY / max) : 0;
+                    const n = Math.round(p * 20);
+                    segs.forEach((s, i) => s.classList.toggle('on', i < n));
+                    const lv = 1 + Math.min(3, Math.floor(p * 4));
+                    lvEl.textContent = 'LV ' + lv;
+                    if (lv !== lastLv) {
+                        lastLv = lv;
+                        up.classList.add('show');
+                        clearTimeout(up._t);
+                        up._t = setTimeout(() => up.classList.remove('show'), 900);
+                    }
+                    stars.forEach(({ s, x, y, f }) => {
+                        const py = (((y * innerHeight - scrollY * f) % innerHeight) + innerHeight) % innerHeight;
+                        s.style.transform = 'translate(' + x * innerWidth + 'px,' + py + 'px)';
+                    });
+                }
+                let queued = false;
+                addEventListener(
+                    'scroll',
+                    () => {
+                        if (queued) return;
+                        queued = true;
+                        requestAnimationFrame(() => {
+                            onScroll();
+                            queued = false;
+                        });
+                    },
+                    { passive: true },
+                );
+                addEventListener('resize', onScroll);
+                onScroll();
             })();
         </script>
     </body>
